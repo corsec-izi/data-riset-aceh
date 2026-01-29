@@ -1,0 +1,775 @@
+<!-- 
+COMPREHENSIVE INTERNAL SITREP & OPERATIONAL LANDING PAGE
+STATUS: FINAL / EXTENDED VERSION - IZI THEME
+1. Narrative: Full-spectrum operational detail. Suitable for HQ monitors and Field Coordinators.
+2. Structure (Long Scroll):
+   - Executive Summary (Top-level Metrics)
+   - Sektor 1: Hunian & Zonasi (Detailed Damage + Zoning Rules)
+   - Sektor 2: WASH & Kesehatan (Disease Radar + Contamination Stats)
+   - Sektor 3: Psikososial & Pendidikan (Trauma Demographics + School Status)
+   - Sektor 4: Livelihood & Akses Pasar (Economic Recovery + Supply Chain)
+   - Sektor 5: Matriks Aksi Desa (Detailed Village-by-Village Plan)
+   - Sektor 6: Manajemen Logistik (Gap Analysis Stock)
+3. Visuals:
+   - All charts and UI elements updated to the official IZI color palette (Green/Orange).
+   - Header and primary sections styled with IZI brand colors.
+4. Compliance: No SVG, No Mermaid, Canvas/HTML only.
+-->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SitRep Lengkap: Respon Bencana Aceh - IZI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #334155; }
+        
+        /* IZI Color Palette (Approximate) */
+        :root {
+            --izi-green-dark: #8fba39; /* e.g., Primary Green */
+            --izi-green-light: #81C784; /* e.g., Secondary Green */
+            --izi-orange: #F57C00; /* e.g., Accent Orange */
+        }
+
+        /* Layout Components */
+        .section-container { margin-bottom: 2.5rem; scroll-margin-top: 5rem; }
+        .dashboard-card {
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            height: 100%;
+        }
+        .header-strip { background-color: var(--izi-green-dark); color: white; }
+        
+        /* Typography */
+        .section-title { font-size: 1.125rem; font-weight: 700; color: var(--izi-green-dark); margin-bottom: 1rem; border-left: 4px solid var(--izi-orange); padding-left: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .card-title { font-size: 0.875rem; font-weight: 600; color: var(--izi-green-dark); text-transform: uppercase; margin-bottom: 0.75rem; border-bottom: 1px solid #F1F5F9; padding-bottom: 0.5rem; }
+        
+        /* Dense Table Styles */
+        .ops-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        .ops-table th { background-color: #F1F5F9; border: 1px solid #E2E8F0; padding: 0.75rem 0.5rem; text-align: left; font-weight: 700; color: var(--izi-green-dark); sticky: top; }
+        .ops-table td { border: 1px solid #E2E8F0; padding: 0.5rem; color: #334155; vertical-align: middle; }
+        .ops-table tr:hover { background-color: #F8FAFC; }
+        .ops-table thead.izi-header th { background-color: var(--izi-green-dark); color: white; }
+
+        
+        /* Indicators */
+        .badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; }
+        .badge-orange { background-color: #FFF3E0; color: var(--izi-orange); border: 1px solid var(--izi-orange); }
+        .badge-green { background-color: #E8F5E9; color: var(--izi-green-dark); border: 1px solid var(--izi-green-light); }
+        
+        .indicator-box { text-align: center; padding: 1rem; border-radius: 0.5rem; background: #F8FAFC; border: 1px solid #E2E8F0; }
+        .indicator-val { font-size: 1.5rem; font-weight: 800; color: var(--izi-green-dark); }
+        .indicator-val.orange { color: var(--izi-orange); }
+        .indicator-label { font-size: 0.75rem; font-weight: 500; color: #64748B; text-transform: uppercase; }
+
+        .chart-container { position: relative; width: 100%; height: 250px; }
+        .chart-h-sm { height: 200px; }
+        .chart-h-lg { height: 350px; }
+
+        /* Print optimization */
+        @media print {
+            .no-print { display: none; }
+            .dashboard-card { break-inside: avoid; border: 1px solid #000; box-shadow: none; }
+            body { background: white; }
+        }
+    </style>
+</head>
+<body class="antialiased text-sm">
+
+    <!-- NAVBAR / HEADER -->
+    <header class="header-strip sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="flex flex-col">
+                    <h1 class="text-lg font-bold tracking-tight leading-none">ACEH RECOVERY OPS</h1>
+                    <span class="text-xs text-green-200 font-mono">SITREP-INT-2026-V2</span>
+                </div>
+                <div class="hidden md:block h-8 w-px bg-green-800 mx-2"></div>
+                <div class="hidden md:flex items-center space-x-2 text-xs">
+                    <span class="bg-orange-500 px-2 py-0.5 rounded text-white font-semibold">FASE TRANSISI</span>
+                    <span class="text-green-200">Aceh Tamiang & Bireuen</span>
+                </div>
+            </div>
+            
+            <!-- Quick Nav -->
+            <div class="flex items-center space-x-3 no-print">
+                <nav class="hidden md:flex space-x-4 text-xs font-medium text-green-200 mr-4">
+                    <a href="#summary" class="hover:text-white">Summary</a>
+                    <a href="#shelter" class="hover:text-white">Hunian</a>
+                    <a href="#health" class="hover:text-white">Kes-WASH</a>
+                    <a href="#livelihood" class="hover:text-white">Ekonomi</a>
+                    <a href="#matrix" class="hover:text-white text-orange-300">Rencana Aksi</a>
+                </nav>
+                <button onclick="window.print()" class="bg-green-800 hover:bg-green-700 text-white px-4 py-2 rounded text-xs font-bold transition">
+                    PRINT REPORT
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+
+        <!-- 1. EXECUTIVE SUMMARY -->
+        <section id="summary" class="section-container">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+                <!-- Situation Text -->
+                <div class="lg:col-span-1 dashboard-card p-6 bg-[var(--izi-green-dark)] text-white border-none flex flex-col justify-center">
+                    <h2 class="text-orange-300 font-bold text-lg mb-2">STATUS KRITIS</h2>
+                    <p class="text-green-100 text-xs leading-relaxed mb-4">
+                        Fase darurat fisik selesai, namun kerentanan struktural sangat tinggi. 100% desa terdampak berada di Zona Merah/Kuning DAS. Prioritas bergeser ke <strong>Relokasi, WASH Permanen, & Stimulus Ekonomi</strong>.
+                    </p>
+                    <div class="mt-auto pt-4 border-t border-green-800">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-green-300">Total Desa:</span>
+                            <span class="font-bold">19 Desa</span>
+                        </div>
+                        <div class="flex justify-between text-xs mt-1">
+                            <span class="text-green-300">Populasi Terdampak:</span>
+                            <span class="font-bold">~109 KK (Sample)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Metrics Grid -->
+                <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="dashboard-card p-4 border-l-4 border-[var(--izi-orange)] flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">Total Income Loss</span>
+                            <div class="text-3xl font-black text-[var(--izi-green-dark)] mt-2">71.6%</div>
+                        </div>
+                        <div class="text-[10px] text-[var(--izi-orange)] font-medium mt-2">Ekonomi Lumpuh</div>
+                    </div>
+                    <div class="dashboard-card p-4 border-l-4 border-[var(--izi-orange)] flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">Trauma Anak</span>
+                            <div class="text-3xl font-black text-[var(--izi-green-dark)] mt-2">76%</div>
+                        </div>
+                        <div class="text-[10px] text-[var(--izi-orange)] font-medium mt-2">Butuh PFA Segera</div>
+                    </div>
+                    <div class="dashboard-card p-4 border-l-4 border-[var(--izi-green-light)] flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">Kontaminasi Air</span>
+                            <div class="text-3xl font-black text-[var(--izi-green-dark)] mt-2">High</div>
+                        </div>
+                        <div class="text-[10px] text-[var(--izi-green-light)] font-medium mt-2">Sumur Gali Tidak Layak</div>
+                    </div>
+                    <div class="dashboard-card p-4 border-l-4 border-[var(--izi-orange)] flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">Akses Pasar</span>
+                            <div class="text-3xl font-black text-[var(--izi-green-dark)] mt-2">Sulit</div>
+                        </div>
+                        <div class="text-[10px] text-yellow-700 font-medium mt-2">80% Jalan Rusak (Bireuen)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SEKTOR HUNIAN & ZONASI (DETAILED) -->
+        <section id="shelter" class="section-container">
+            <h2 class="section-title">SEKTOR 1: HUNIAN, INFRASTRUKTUR & ZONASI</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Chart: Damage Levels -->
+                <div class="dashboard-card p-5">
+                    <h3 class="card-title">Tingkat Kerusakan Hunian</h3>
+                    <div class="chart-container">
+                        <canvas id="housingChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-xs text-slate-500 text-center italic">
+                        "Desa di dalam DAS mengalami kerusakan struktural berulang yang tidak bisa diselesaikan dengan perbaikan kosmetik."
+                    </div>
+                </div>
+
+                <!-- Zoning Analysis Table -->
+                <div class="lg:col-span-2 dashboard-card p-5">
+                    <h3 class="card-title">Analisis Zonasi & Rekomendasi Teknis</h3>
+                    <div class="overflow-x-auto">
+                        <table class="ops-table">
+                            <thead>
+                                <tr>
+                                    <th>Kategori Zona</th>
+                                    <th>Jarak DAS</th>
+                                    <th>Risiko Utama</th>
+                                    <th class="text-center">Jml KK</th>
+                                    <th>Strategi Wajib</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-orange-50 border-l-4 border-[var(--izi-orange)]">
+                                    <td class="font-bold text-[var(--izi-orange)]">Zona Merah (Bahaya)</td>
+                                    <td>< 50 Meter</td>
+                                    <td>Hanyut, Erosi Tebing, Banjir Bandang</td>
+                                    <td class="text-center font-bold text-lg">71 KK</td>
+                                    <td>
+                                        <span class="bg-orange-100 text-[var(--izi-orange)] px-2 py-1 rounded text-xs font-bold">Relokasi / Panggung</span>
+                                    </td>
+                                </tr>
+                                <tr class="bg-green-50 border-l-4 border-[var(--izi-green-light)]">
+                                    <td class="font-bold text-[var(--izi-green-dark)]">Zona Kuning (Waspada)</td>
+                                    <td>50 - 200 Meter</td>
+                                    <td>Genangan Lumpur, Rembesan Air</td>
+                                    <td class="text-center font-bold text-lg">38 KK</td>
+                                    <td>
+                                        <span class="bg-green-100 text-[var(--izi-green-dark)] px-2 py-1 rounded text-xs font-bold">Rehabilitasi Struktur</span>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-l-4 border-slate-300">
+                                    <td class="font-bold text-slate-600">Zona Hijau (Aman)</td>
+                                    <td>> 200 Meter</td>
+                                    <td>Dampak Tidak Langsung</td>
+                                    <td class="text-center font-bold text-lg">0 KK</td>
+                                    <td>
+                                        <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs font-bold">Repair Kit Biasa</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 p-3 bg-slate-50 text-xs text-slate-600 rounded border border-slate-200">
+                        <strong>Implikasi Operasional:</strong> Dilarang memberikan bantuan bahan bangunan permanen (semen/bata) untuk Zona Merah tanpa modifikasi struktur (Panggung). Fokus Zona Merah adalah Hunian Sementara atau Relokasi.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. SEKTOR WASH & KESEHATAN (EXPANDED) -->
+        <section id="health" class="section-container">
+            <h2 class="section-title">SEKTOR 2: WASH (AIR & SANITASI) DAN KESEHATAN</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- WASH Stats -->
+                <div class="dashboard-card p-5">
+                    <h3 class="card-title">Status Kontaminasi Air</h3>
+                    <div class="chart-container chart-h-sm">
+                        <canvas id="washChart"></canvas>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <div class="indicator-box border-[var(--izi-orange)] bg-orange-50">
+                            <div class="indicator-val orange">100%</div>
+                            <div class="indicator-label">Sumur Tercemar<br>(Padang Langgis)</div>
+                        </div>
+                        <div class="indicator-box border-[var(--izi-green-light)] bg-green-50">
+                            <div class="indicator-val text-[var(--izi-green-dark)]">59%</div>
+                            <div class="indicator-label">MCK Rusak<br>(Tamiang)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disease Profile (Radar) -->
+                <div class="dashboard-card p-5">
+                    <h3 class="card-title">Profil Penyakit Pascabencana</h3>
+                    <div class="chart-container chart-h-sm">
+                        <canvas id="diseaseChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-xs text-slate-600">
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li><strong>ISPA:</strong> Dominan di kedua wilayah (akibat lembab/debu).</li>
+                            <li><strong>Penyakit Kulit:</strong> Indikator sanitasi buruk & kontak air kotor.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Health Service Status -->
+                <div class="dashboard-card p-5">
+                    <h3 class="card-title">Status Faskes (Puskesmas)</h3>
+                    <div class="space-y-4">
+                        <div class="p-3 bg-orange-50 border-l-4 border-[var(--izi-orange)] rounded-r">
+                            <h4 class="font-bold text-[var(--izi-orange)] text-xs">TIDAK BEROPERASI / TUTUP</h4>
+                            <p class="text-xs text-slate-600 mt-1">Desa: Alur Cucur, Mekar Jaya, Paya Kulbi, Blang Panjoe, Kapa, Raya Dagang.</p>
+                            <span class="inline-block mt-2 px-2 py-0.5 bg-orange-100 text-[var(--izi-orange)] text-[10px] font-bold rounded">BUTUH MOBILE CLINIC</span>
+                        </div>
+                        <div class="p-3 bg-green-50 border-l-4 border-[var(--izi-green-light)] rounded-r">
+                            <h4 class="font-bold text-[var(--izi-green-dark)] text-xs">BELUM NORMAL / PARSIAL</h4>
+                            <p class="text-xs text-slate-600 mt-1">Desa: Padang Langgis, Lintang Bawah, Meunang Gini.</p>
+                        </div>
+                        <div class="p-3 bg-slate-50 border-l-4 border-slate-400 rounded-r">
+                            <h4 class="font-bold text-slate-700 text-xs">STATUS TIDAK DIKETAHUI WARGA</h4>
+                            <p class="text-xs text-slate-600 mt-1">Masalah komunikasi publik (Signifikan di Upah & Pante Pisang).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. PSIKOSOSIAL & PENDIDIKAN -->
+        <section id="psychosocial" class="section-container">
+            <h2 class="section-title">SEKTOR 3: PSIKOSOSIAL & PENDIDIKAN</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Trauma Breakdown -->
+                <div class="dashboard-card p-5">
+                    <h3 class="card-title">Analisis Trauma: Anak vs Dewasa</h3>
+                    <div class="chart-container chart-h-sm">
+                        <canvas id="traumaChart"></canvas>
+                    </div>
+                    <div class="mt-4 p-3 bg-slate-50 rounded text-xs text-slate-600 border border-slate-200">
+                        <strong>Insight:</strong> Trauma anak (Takut Hujan) lebih tinggi daripada dewasa. Namun di <strong>Padang Langgis</strong>, trauma dewasa sangat tinggi karena beban ekonomi dan kehilangan aset total.
+                    </div>
+                </div>
+
+                <!-- Education Status -->
+                <div class="dashboard-card p-5">
+                    <h3 class="card-title">Status Operasional Sekolah & Kebutuhan</h3>
+                    <div class="grid grid-cols-2 gap-4 h-full content-start">
+                        <!-- Stat Circle -->
+                        <div class="flex flex-col items-center justify-center p-4 bg-green-50 rounded-lg">
+                            <span class="text-3xl font-black text-[var(--izi-green-dark)]">80%</span>
+                            <span class="text-xs text-center text-slate-500 font-bold uppercase mt-1">Sekolah Buka</span>
+                            <span class="text-[10px] text-center text-slate-400">Rata-rata Wilayah</span>
+                        </div>
+                        <!-- Gap List -->
+                        <div class="space-y-2">
+                            <div class="text-xs font-bold text-slate-700 uppercase mb-2">Item Siswa yang Hilang:</div>
+                            <div class="flex justify-between items-center text-xs border-b border-slate-100 pb-1">
+                                <span>Seragam</span>
+                                <span class="text-[var(--izi-orange)] font-bold">Kritis</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs border-b border-slate-100 pb-1">
+                                <span>Buku Tulis</span>
+                                <span class="text-[var(--izi-orange)] font-bold">Kritis</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs border-b border-slate-100 pb-1">
+                                <span>Tas Sekolah</span>
+                                <span class="text-[var(--izi-green-dark)] font-bold">Tinggi</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs border-b border-slate-100 pb-1">
+                                <span>Sepatu</span>
+                                <span class="text-[var(--izi-green-dark)] font-bold">Tinggi</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-[10px] text-slate-500 italic">
+                        *Di Kampung Durian, operasional sekolah masih rendah (30-50%).
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 5. LIVELIHOOD & AKSES PASAR -->
+        <section id="livelihood" class="section-container">
+            <h2 class="section-title">SEKTOR 4: EKONOMI (LIVELIHOOD) & LOGISTIK</h2>
+            
+            <!-- Comparison Charts -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="dashboard-card p-5">
+                    <h3 class="card-title">Profil Mata Pencaharian Terdampak</h3>
+                    <div class="chart-container chart-h-sm">
+                        <canvas id="livelihoodCompChart"></canvas>
+                    </div>
+                </div>
+                <div class="dashboard-card p-5">
+                    <h3 class="card-title">Hambatan Akses Pasar & Logistik</h3>
+                    <div class="chart-container chart-h-sm">
+                        <canvas id="marketAccessChart"></canvas>
+                    </div>
+                    <div class="mt-2 text-xs text-center text-slate-500">
+                        Waktu tempuh ke pasar di Tamiang mayoritas >15 menit karena kerusakan jalan.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Impact Matrix -->
+            <div class="dashboard-card p-5">
+                <h3 class="card-title">Detail Kerugian Aset Ekonomi</h3>
+                <div class="overflow-x-auto">
+                    <table class="ops-table text-center">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Indikator Dampak</th>
+                                <th>Aceh Tamiang</th>
+                                <th>Bireuen</th>
+                                <th>Interpretasi Operasional</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-left font-bold">Kehilangan Pendapatan</td>
+                                <td class="bg-orange-50 text-[var(--izi-orange)] font-bold">69.0%</td>
+                                <td class="bg-orange-50 text-[var(--izi-orange)] font-bold">76.3%</td>
+                                <td class="text-left text-xs">Cash-for-work sangat dibutuhkan segera.</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left font-bold">Kehilangan Ternak</td>
+                                <td>23.9%</td>
+                                <td class="bg-green-50 text-[var(--izi-green-dark)] font-bold">52.6%</td>
+                                <td class="text-left text-xs">Bireuen butuh program restocking (Kambing/Sapi).</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left font-bold">Lahan Rusak</td>
+                                <td>8.5%</td>
+                                <td class="bg-green-50 text-[var(--izi-green-dark)] font-bold">36.8%</td>
+                                <td class="text-left text-xs">Bireuen butuh pembersihan lahan & bibit.</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left font-bold">UMKM Terdampak</td>
+                                <td class="bg-green-50 text-[var(--izi-green-dark)] font-bold">38.0%</td>
+                                <td class="bg-green-50 text-[var(--izi-green-dark)] font-bold">42.1%</td>
+                                <td class="text-left text-xs">Bantuan modal alat/barang dagangan.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. MATRIKS AKSI DESA (DETAILED) -->
+        <section id="matrix" class="section-container">
+            <h2 class="section-title text-[var(--izi-green-dark)] border-[var(--izi-orange)]">SEKTOR 5: RENCANA AKSI PER DESA (DETAIL)</h2>
+            <div class="dashboard-card overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="ops-table">
+                        <thead class="izi-header">
+                            <tr>
+                                <th class="w-32">DESA / KEC</th>
+                                <th>HUNIAN</th>
+                                <th>WASH</th>
+                                <th>LIVELIHOOD</th>
+                                <th>KESEHATAN</th>
+                                <th class="w-20 text-center">PRIORITAS</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <!-- CLUSTER 1: HIGH RISK ACEH TAMIANG -->
+                            <tr class="bg-orange-50">
+                                <td>
+                                    <div class="font-bold text-slate-800">Padang Langgis</div>
+                                    <div class="text-[10px] text-slate-500">Aceh Tamiang</div>
+                                </td>
+                                <td>
+                                    <div class="font-bold text-xs text-[var(--izi-orange)]">Relokasi/Panggung</div>
+                                    <div class="text-[10px]">Rusak Berat, Dalam DAS</div>
+                                </td>
+                                <td>
+                                    <div class="font-bold text-xs text-[var(--izi-orange)]">Filtrasi Komunal</div>
+                                    <div class="text-[10px]">100% Sumur Cemar</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs">Modal UMKM & Nelayan</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs font-bold">Trauma Berat</div>
+                                    <div class="text-[10px]">Puskesmas Parsial</div>
+                                </td>
+                                <td class="text-center font-black text-[var(--izi-orange)] bg-white border-l">P1</td>
+                            </tr>
+                            <tr class="bg-orange-50">
+                                <td>
+                                    <div class="font-bold text-slate-800">Lintang Bawah</div>
+                                    <div class="text-[10px] text-slate-500">Aceh Tamiang</div>
+                                </td>
+                                <td>
+                                    <div class="font-bold text-xs text-[var(--izi-orange)]">Relokasi Bertahap</div>
+                                    <div class="text-[10px]">Hancur, Dalam DAS</div>
+                                </td>
+                                <td>
+                                    <div class="font-bold text-xs text-[var(--izi-orange)]">MCK Permanen</div>
+                                    <div class="text-[10px]">MCK Umum Rusak</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs">Bantuan Tunai</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs">Mobile Clinic</div>
+                                </td>
+                                <td class="text-center font-black text-[var(--izi-orange)] bg-white border-l">P1</td>
+                            </tr>
+                            <tr class="bg-green-50">
+                                <td>
+                                    <div class="font-bold text-slate-800">Alur Cucur</div>
+                                    <div class="text-[10px] text-slate-500">Aceh Tamiang</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs text-[var(--izi-green-dark)]">Repair Kit</div>
+                                    <div class="text-[10px]">Rusak Ringan, Jauh DAS</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs text-[var(--izi-green-light)]">Air Bersih</div>
+                                    <div class="text-[10px]">Sumur Cemar</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs">Alat Tani/Kebun</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs font-bold text-[var(--izi-orange)]">Puskesmas Tutup</div>
+                                </td>
+                                <td class="text-center font-bold text-[var(--izi-green-light)] bg-white border-l">P2</td>
+                            </tr>
+
+                            <!-- CLUSTER 2: HIGH RISK BIREUEN -->
+                            <tr class="bg-orange-50 border-t-4 border-slate-300">
+                                <td>
+                                    <div class="font-bold text-slate-800">Kapa</div>
+                                    <div class="text-[10px] text-slate-500">Bireuen</div>
+                                </td>
+                                <td>
+                                    <div class="font-bold text-xs text-[var(--izi-orange)]">Relokasi Terbatas</div>
+                                    <div class="text-[10px]">Hancur, Dalam DAS</div>
+                                </td>
+                                <td>
+                                    <div class="font-bold text-xs text-[var(--izi-orange)]">Pipanisasi</div>
+                                    <div class="text-[10px]">80% Sumur Cemar</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs font-bold">Total Loss (Agraria)</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs font-bold text-[var(--izi-orange)]">Puskesmas Tutup</div>
+                                </td>
+                                <td class="text-center font-black text-[var(--izi-orange)] bg-white border-l">P1</td>
+                            </tr>
+                            <tr class="bg-green-50">
+                                <td>
+                                    <div class="font-bold text-slate-800">Blang Panjoe</div>
+                                    <div class="text-[10px] text-slate-500">Bireuen</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs text-[var(--izi-green-dark)]">Repair Kit</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs text-[var(--izi-green-dark)]">Air Aman</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs font-bold">Restocking Ternak</div>
+                                    <div class="text-[10px]">Kehilangan Tinggi</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs text-[var(--izi-orange)]">Trauma Anak Tinggi</div>
+                                </td>
+                                <td class="text-center font-bold text-[var(--izi-green-light)] bg-white border-l">P2</td>
+                            </tr>
+                             <tr>
+                                <td>
+                                    <div class="font-bold text-slate-800">Raya Dagang</div>
+                                    <div class="text-[10px] text-slate-500">Bireuen</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs text-[var(--izi-green-dark)]">Repair Kit</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs text-[var(--izi-green-light)]">Perbaikan MCK</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs">Modal Dagang</div>
+                                </td>
+                                <td>
+                                    <div class="text-xs text-[var(--izi-orange)]">Puskesmas Tutup</div>
+                                </td>
+                                <td class="text-center font-bold text-blue-600 bg-white border-l">P3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. GAP ANALYSIS & LOGISTICS -->
+        <section id="logistics" class="section-container">
+            <h2 class="section-title">SEKTOR 6: MANAJEMEN STOK & LOGISTIK</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Current Stock Chart -->
+                <div class="dashboard-card p-5">
+                    <h3 class="card-title">Analisis Gap: Ketersediaan vs Kebutuhan</h3>
+                    <div class="chart-container chart-h-sm">
+                        <canvas id="gapAnalysisChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Action Items List -->
+                <div class="dashboard-card p-5">
+                    <h3 class="card-title">Daftar Pengadaan Mendesak (Procurement List)</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center justify-between p-3 bg-orange-50 border border-orange-100 rounded">
+                            <div class="flex items-center">
+                                <span class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-[var(--izi-orange)] font-bold mr-3">1</span>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-800">Material Bangunan (Non-Permanen)</div>
+                                    <div class="text-xs text-slate-500">Seng, Paku, Kayu, Terpal Kualitas Tinggi</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-orange">Urgent</span>
+                        </li>
+                        <li class="flex items-center justify-between p-3 bg-orange-50 border border-orange-100 rounded">
+                            <div class="flex items-center">
+                                <span class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-[var(--izi-orange)] font-bold mr-3">2</span>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-800">Unit Filtrasi Air Mobile</div>
+                                    <div class="text-xs text-slate-500">Kapasitas Komunal untuk Padang Langgis & Kapa</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-orange">Urgent</span>
+                        </li>
+                        <li class="flex items-center justify-between p-3 bg-green-50 border border-green-100 rounded">
+                            <div class="flex items-center">
+                                <span class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-[var(--izi-green-dark)] font-bold mr-3">3</span>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-800">Paket Sekolah (School Kits)</div>
+                                    <div class="text-xs text-slate-500">Seragam, Sepatu, Buku (Qty: ~200 Paket)</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-green">High</span>
+                        </li>
+                         <li class="flex items-center justify-between p-3 bg-white border border-slate-200 rounded">
+                            <div class="flex items-center">
+                                <span class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold mr-3">4</span>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-800">Bibit & Ternak Kecil</div>
+                                    <div class="text-xs text-slate-500">Kambing/Unggas untuk Bireuen</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-green">Medium</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center text-xs text-slate-400 py-8 border-t border-slate-200 mt-8">
+            <p>Sistem Informasi Respon Bencana Internal - Data bersumber dari Laporan Asesmen Lapangan Tamiang & Bireuen.</p>
+            <p class="mt-1">Dibuat untuk koordinasi operasional. Jangan disebarkan ke publik tanpa otorisasi.</p>
+        </footer>
+
+    </main>
+
+    <!-- SCRIPTS -->
+    <script>
+        // --- DATA PROCESSING UTILITIES ---
+        function wrapLabel(label) {
+            if (typeof label !== 'string' || label.length <= 15) return label;
+            return label.match(/.{1,15}(?:\s|$)/g) || [label];
+        }
+
+        const commonChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 10, font: {size: 11} } },
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            return Array.isArray(label) ? label.join(' ') : label;
+                        }
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // 1. Housing Chart (Bar)
+            const ctxHousing = document.getElementById('housingChart').getContext('2d');
+            new Chart(ctxHousing, {
+                type: 'bar',
+                data: {
+                    labels: ["Hancur", "Rusak Berat", "Rusak Sedang", "Rusak Ringan"],
+                    datasets: [
+                        { label: 'Aceh Tamiang', data: [14, 11, 12, 34], backgroundColor: '#8fba39' }, // IZI Green Dark
+                        { label: 'Bireuen', data: [4, 4, 5, 25], backgroundColor: '#81C784' } // IZI Green Light
+                    ]
+                },
+                options: commonChartOptions
+            });
+
+            // 2. WASH Chart (Doughnut)
+            const ctxWash = document.getElementById('washChart').getContext('2d');
+            new Chart(ctxWash, {
+                type: 'doughnut',
+                data: {
+                    labels: ["Tamiang Tercemar", "Tamiang Aman", "Bireuen Tercemar", "Bireuen Aman"],
+                    datasets: [{
+                        data: [63.4, 36.6, 39.5, 60.5],
+                        backgroundColor: ['#F57C00', '#8fba39', '#81C784', '#4DB6AC'], // IZI Orange, Green Dark, Green Light, Teal Accent
+                        borderWidth: 0
+                    }]
+                },
+                options: { ...commonChartOptions, cutout: '60%', plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } } }
+            });
+
+            // 3. Disease Profile (Radar) - NEW
+            const ctxDisease = document.getElementById('diseaseChart').getContext('2d');
+            new Chart(ctxDisease, {
+                type: 'radar',
+                data: {
+                    labels: ['ISPA', 'Kulit', 'Pencernaan', 'Demam', 'Lainnya'],
+                    datasets: [
+                        { label: 'Aceh Tamiang', data: [35, 30, 20, 5, 10], borderColor: '#8fba39', backgroundColor: 'rgba(10, 102, 58, 0.2)' }, // IZI Green Dark
+                        { label: 'Bireuen', data: [50, 30, 10, 5, 5], borderColor: '#F57C00', backgroundColor: 'rgba(245, 124, 0, 0.2)' } // IZI Orange
+                    ]
+                },
+                options: { ...commonChartOptions, scales: { r: { suggesteMin: 0, suggestedMax: 60 } } }
+            });
+
+            // 4. Trauma Breakdown (Grouped Bar) - NEW
+            const ctxTrauma = document.getElementById('traumaChart').getContext('2d');
+            new Chart(ctxTrauma, {
+                type: 'bar',
+                data: {
+                    labels: ['Aceh Tamiang', 'Bireuen'],
+                    datasets: [
+                        { label: 'Trauma Anak (%)', data: [76, 60], backgroundColor: '#F57C00' }, // IZI Orange for kids
+                        { label: 'Trauma Dewasa (%)', data: [65, 50], backgroundColor: '#81C784' } // IZI Green Light for adults
+                    ]
+                },
+                options: { ...commonChartOptions, scales: { y: { beginAtZero: true, max: 100 } } }
+            });
+
+            // 5. Livelihood Comparison (Horizontal Bar)
+            const ctxLiv = document.getElementById('livelihoodCompChart').getContext('2d');
+            new Chart(ctxLiv, {
+                type: 'bar',
+                indexAxis: 'y',
+                data: {
+                    labels: ['Kehilangan Income', 'Ternak Hilang', 'Lahan Rusak', 'UMKM Terdampak'],
+                    datasets: [
+                        { label: 'Aceh Tamiang', data: [69, 23.9, 8.5, 38], backgroundColor: '#8fba39' }, // IZI Green Dark
+                        { label: 'Bireuen', data: [76.3, 52.6, 36.8, 42.1], backgroundColor: '#81C784' } // IZI Green Light
+                    ]
+                },
+                options: commonChartOptions
+            });
+
+            // 6. Market Access (Bar)
+            const ctxMarket = document.getElementById('marketAccessChart').getContext('2d');
+            new Chart(ctxMarket, {
+                type: 'bar',
+                data: {
+                    labels: ['Akses Jalan Rusak', 'Waktu Tempuh >15m'],
+                    datasets: [
+                        { label: 'Aceh Tamiang', data: [57.8, 45], backgroundColor: '#8fba39' }, // IZI Green Dark
+                        { label: 'Bireuen', data: [80.3, 20], backgroundColor: '#F57C00' } // IZI Orange
+                    ]
+                },
+                options: {
+                    ...commonChartOptions,
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+
+            // 7. Gap Analysis (Bar) - NEW
+            const ctxGap = document.getElementById('gapAnalysisChart').getContext('2d');
+            new Chart(ctxGap, {
+                type: 'bar',
+                data: {
+                    labels: ['Sembako/Pangan', 'Tenda/Shelter', 'Material Bangunan', 'Air Bersih', 'Modal Usaha'],
+                    datasets: [
+                        { label: 'Tersedia (Current)', data: [90, 80, 10, 40, 5], backgroundColor: '#8fba39' }, // IZI Green Dark
+                        { label: 'Kebutuhan (Gap)', data: [10, 20, 90, 60, 95], backgroundColor: '#F57C00' } // IZI Orange
+                    ]
+                },
+                options: {
+                    ...commonChartOptions,
+                    scales: { x: { stacked: true }, y: { stacked: true, max: 100 } }
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>
