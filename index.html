@@ -1,18 +1,19 @@
 <!-- 
 COMPREHENSIVE INTERNAL SITREP & OPERATIONAL LANDING PAGE
-STATUS: FINAL / EXTENDED VERSION - IZI THEME
-1. Narrative: Full-spectrum operational detail. Suitable for HQ monitors and Field Coordinators.
+STATUS: FINAL / EXTENDED VERSION - IZI THEME + FUNDRAISING
+1. Narrative: Full-spectrum operational detail including Fundraising Recommendations.
 2. Structure (Long Scroll):
-   - Executive Summary (Top-level Metrics)
-   - Sektor 1: Hunian & Zonasi (Detailed Damage + Zoning Rules)
-   - Sektor 2: WASH & Kesehatan (Disease Radar + Contamination Stats)
-   - Sektor 3: Psikososial & Pendidikan (Trauma Demographics + School Status)
-   - Sektor 4: Livelihood & Akses Pasar (Economic Recovery + Supply Chain)
-   - Sektor 5: Matriks Aksi Desa (Detailed Village-by-Village Plan)
-   - Sektor 6: Manajemen Logistik (Gap Analysis Stock)
+   - Executive Summary
+   - Sektor 1: Hunian & Zonasi
+   - Sektor 2: WASH & Kesehatan
+   - Sektor 3: Psikososial & Pendidikan
+   - Sektor 4: Livelihood & Akses Pasar
+   - Sektor 5: Matriks Aksi Desa
+   - Sektor 6: Manajemen Logistik
+   - Sektor 7: Rekomendasi Fundraising (NEW)
 3. Visuals:
-   - All charts and UI elements updated to the official IZI color palette (Green/Orange).
-   - Header and primary sections styled with IZI brand colors.
+   - IZI Brand Colors (Green/Orange).
+   - Fundraising Cards with "Emotional Hook" and "Donation Packages".
 4. Compliance: No SVG, No Mermaid, Canvas/HTML only.
 -->
 <!DOCTYPE html>
@@ -30,9 +31,9 @@ STATUS: FINAL / EXTENDED VERSION - IZI THEME
         
         /* IZI Color Palette (Approximate) */
         :root {
-            --izi-green-dark: #8fba39; /* e.g., Primary Green */
-            --izi-green-light: #81C784; /* e.g., Secondary Green */
-            --izi-orange: #F57C00; /* e.g., Accent Orange */
+            --izi-green-dark: #8fba39; /* Primary Green (Logo-like) */
+            --izi-green-light: #81C784; /* Secondary Green */
+            --izi-orange: #F57C00; /* Accent Orange */
         }
 
         /* Layout Components */
@@ -88,25 +89,24 @@ STATUS: FINAL / EXTENDED VERSION - IZI THEME
             <div class="flex items-center space-x-4">
                 <div class="flex flex-col">
                     <h1 class="text-lg font-bold tracking-tight leading-none">ACEH RECOVERY OPS</h1>
-                    <span class="text-xs text-green-200 font-mono">SITREP-INT-2026-V2</span>
+                    <span class="text-xs text-green-100 font-mono">SITREP-INT-2026-V2</span>
                 </div>
-                <div class="hidden md:block h-8 w-px bg-green-800 mx-2"></div>
+                <div class="hidden md:block h-8 w-px bg-white/30 mx-2"></div>
                 <div class="hidden md:flex items-center space-x-2 text-xs">
                     <span class="bg-orange-500 px-2 py-0.5 rounded text-white font-semibold">FASE TRANSISI</span>
-                    <span class="text-green-200">Aceh Tamiang & Bireuen</span>
+                    <span class="text-green-100">Aceh Tamiang & Bireuen</span>
                 </div>
             </div>
             
             <!-- Quick Nav -->
             <div class="flex items-center space-x-3 no-print">
-                <nav class="hidden md:flex space-x-4 text-xs font-medium text-green-200 mr-4">
+                <nav class="hidden md:flex space-x-4 text-xs font-medium text-green-100 mr-4">
                     <a href="#summary" class="hover:text-white">Summary</a>
-                    <a href="#shelter" class="hover:text-white">Hunian</a>
-                    <a href="#health" class="hover:text-white">Kes-WASH</a>
-                    <a href="#livelihood" class="hover:text-white">Ekonomi</a>
-                    <a href="#matrix" class="hover:text-white text-orange-300">Rencana Aksi</a>
+                    <a href="#matrix" class="hover:text-white">Rencana Aksi</a>
+                    <a href="#logistics" class="hover:text-white">Logistik</a>
+                    <a href="#fundraising" class="hover:text-white text-orange-200 font-bold border-b border-orange-300">Fundraising</a>
                 </nav>
-                <button onclick="window.print()" class="bg-green-800 hover:bg-green-700 text-white px-4 py-2 rounded text-xs font-bold transition">
+                <button onclick="window.print()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded text-xs font-bold transition">
                     PRINT REPORT
                 </button>
             </div>
@@ -124,13 +124,13 @@ STATUS: FINAL / EXTENDED VERSION - IZI THEME
                     <p class="text-green-100 text-xs leading-relaxed mb-4">
                         Fase darurat fisik selesai, namun kerentanan struktural sangat tinggi. 100% desa terdampak berada di Zona Merah/Kuning DAS. Prioritas bergeser ke <strong>Relokasi, WASH Permanen, & Stimulus Ekonomi</strong>.
                     </p>
-                    <div class="mt-auto pt-4 border-t border-green-800">
+                    <div class="mt-auto pt-4 border-t border-white/20">
                         <div class="flex justify-between text-xs">
-                            <span class="text-green-300">Total Desa:</span>
+                            <span class="text-green-100">Total Desa:</span>
                             <span class="font-bold">19 Desa</span>
                         </div>
                         <div class="flex justify-between text-xs mt-1">
-                            <span class="text-green-300">Populasi Terdampak:</span>
+                            <span class="text-green-100">Populasi Terdampak:</span>
                             <span class="font-bold">~109 KK (Sample)</span>
                         </div>
                     </div>
@@ -625,6 +625,109 @@ STATUS: FINAL / EXTENDED VERSION - IZI THEME
                             <span class="badge badge-green">Medium</span>
                         </li>
                     </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. REKOMENDASI FUNDRAISING -->
+        <section id="fundraising" class="section-container">
+            <h2 class="section-title text-[var(--izi-green-dark)] border-[var(--izi-orange)]">SEKTOR 7: REKOMENDASI KAMPANYE FUNDRAISING</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Campaign 1: Wakaf Air -->
+                <div class="dashboard-card p-0 overflow-hidden flex flex-col">
+                    <div class="bg-blue-50 p-4 border-b border-blue-100">
+                        <div class="flex justify-between items-start">
+                            <span class="badge bg-blue-100 text-blue-700 mb-2">WAKAF INFRASTRUKTUR</span>
+                            <span class="text-xs font-bold text-slate-400">TARGET: CSR & HIGH VALUE DONOR</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800">Program "Alirkan Kehidupan" (WASH)</h3>
+                    </div>
+                    <div class="p-5 flex-grow">
+                        <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+                            <strong>Context:</strong> 100% sumur di Padang Langgis tercemar total. Warga membeli air galon yang menguras sisa uang.
+                        </p>
+                        <div class="bg-slate-50 p-3 rounded border border-slate-200 mb-4">
+                            <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Narasi Emosional:</p>
+                            <p class="text-xs text-slate-700 italic">"Bayangkan harus mandi dan memasak dengan air keruh bercampur lumpur. Wakaf Anda hadirkan instalasi filtrasi permanen untuk satu desa."</p>
+                        </div>
+                        <ul class="space-y-1 text-xs text-slate-600">
+                            <li>✅ <strong>Produk:</strong> Sumur Bor Komunal & Filtrasi</li>
+                            <li>✅ <strong>Paket Donasi:</strong> Rp 25.000.000 / Unit</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Campaign 2: Zakat Produktif -->
+                <div class="dashboard-card p-0 overflow-hidden flex flex-col">
+                    <div class="bg-orange-50 p-4 border-b border-orange-100">
+                        <div class="flex justify-between items-start">
+                            <span class="badge badge-orange mb-2">ZAKAT PRODUKTIF</span>
+                            <span class="text-xs font-bold text-slate-400">TARGET: RETAIL & KOMUNITAS</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800">Program "Modal Bangkit" (Livelihood)</h3>
+                    </div>
+                    <div class="p-5 flex-grow">
+                        <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+                            <strong>Context:</strong> 71.6% warga kehilangan pendapatan. Di Bireuen, ternak hanyut. Di Tamiang, kios rusak.
+                        </p>
+                        <div class="bg-slate-50 p-3 rounded border border-slate-200 mb-4">
+                            <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Narasi Emosional:</p>
+                            <p class="text-xs text-slate-700 italic">"Banjir menghanyutkan ternak dan modal usaha mereka. Zakat Anda bukan sekadar bantuan, tapi modal untuk mereka berdaya kembali."</p>
+                        </div>
+                        <ul class="space-y-1 text-xs text-slate-600">
+                            <li>✅ <strong>Produk:</strong> Kambing Ternak, Modal Kios, Alat Pertanian</li>
+                            <li>✅ <strong>Paket Donasi:</strong> Rp 2.500.000 / Paket Usaha</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Campaign 3: Sedekah Hunian -->
+                <div class="dashboard-card p-0 overflow-hidden flex flex-col">
+                    <div class="bg-green-50 p-4 border-b border-green-100">
+                        <div class="flex justify-between items-start">
+                            <span class="badge badge-green mb-2">SEDEKAH / INFAK</span>
+                            <span class="text-xs font-bold text-slate-400">TARGET: CROWDFUNDING</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800">Program "Rumah Teduh" (Shelter)</h3>
+                    </div>
+                    <div class="p-5 flex-grow">
+                        <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+                            <strong>Context:</strong> Zona Merah tidak boleh dibangun permanen. Solusinya adalah renovasi adaptif (panggung) atau repair kit.
+                        </p>
+                        <div class="bg-slate-50 p-3 rounded border border-slate-200 mb-4">
+                            <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Narasi Emosional:</p>
+                            <p class="text-xs text-slate-700 italic">"Rumah mereka hancur, namun mereka tak punya tanah lain untuk pindah. Bantu mereka perbaiki atap dan dinding agar bisa tidur nyenyak."</p>
+                        </div>
+                        <ul class="space-y-1 text-xs text-slate-600">
+                            <li>✅ <strong>Produk:</strong> Paket Seng, Kayu, Semen</li>
+                            <li>✅ <strong>Paket Donasi:</strong> Rp 500.000 / Paket Material</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Campaign 4: Sahabat Pelajar -->
+                <div class="dashboard-card p-0 overflow-hidden flex flex-col">
+                    <div class="bg-purple-50 p-4 border-b border-purple-100">
+                        <div class="flex justify-between items-start">
+                            <span class="badge bg-purple-100 text-purple-700 mb-2">PROGRAM YATIM & DHUAFA</span>
+                            <span class="text-xs font-bold text-slate-400">TARGET: RETAIL</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800">Program "Kembali Sekolah"</h3>
+                    </div>
+                    <div class="p-5 flex-grow">
+                        <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+                            <strong>Context:</strong> Sekolah buka (80%), tapi siswa datang tanpa seragam dan buku karena hanyut. Trauma anak tinggi.
+                        </p>
+                        <div class="bg-slate-50 p-3 rounded border border-slate-200 mb-4">
+                            <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Narasi Emosional:</p>
+                            <p class="text-xs text-slate-700 italic">"Tas dan buku mereka hilang terbawa banjir. Jangan biarkan semangat belajar mereka ikut hanyut. Hadirkan senyum mereka kembali."</p>
+                        </div>
+                        <ul class="space-y-1 text-xs text-slate-600">
+                            <li>✅ <strong>Produk:</strong> School Kit (Tas, Seragam, Sepatu)</li>
+                            <li>✅ <strong>Paket Donasi:</strong> Rp 350.000 / Anak</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
